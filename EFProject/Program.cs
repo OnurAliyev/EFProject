@@ -60,13 +60,13 @@ while (runApp)
                             Name = studentName,
                             Surname = studentSurname,
                             Age = studentAge,
-                            CreatedDate = DateTime.Now,
+                            CreatedDate = DateTime.Now
                         };
                         students.Add(student);
                         await context.Students.AddAsync(student);
                         await context.SaveChangesAsync();
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Student created successfully!");
+                        Console.WriteLine("\nStudent created successfully!\n");
                         Console.ResetColor();
                     }
                     catch (Exception ex)
@@ -81,19 +81,19 @@ while (runApp)
                     try
                     {
                         Console.WriteLine("Enter group name:");
-                        string groupName=Console.ReadLine();
+                        string groupName = Console.ReadLine();
                         int groupCapacity;
                         do
                         {
                             Console.Write("Enter group capacity (must be greater than 10): ");
                         } while (!int.TryParse(Console.ReadLine(), out groupCapacity) || groupCapacity <= 10);
-                        Group existingGroup=await context.Groups.FirstOrDefaultAsync(g => g.Name == groupName);
-                        if(existingGroup is null)
+                        Group existingGroup = await context.Groups.FirstOrDefaultAsync(g => g.Name == groupName);
+                        if (existingGroup is null)
                         {
                             Group group = new()
                             {
                                 Name = groupName,
-                                Capacity=groupCapacity,
+                                Capacity = groupCapacity,
                                 CreatedTime = DateTime.Now
 
                             };
@@ -101,13 +101,13 @@ while (runApp)
                             await context.Groups.AddAsync(group);
                             await context.SaveChangesAsync();
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Group created succesfully!");
+                            Console.WriteLine("\nGroup created succesfully!\n");
                             Console.ResetColor();
                         }
                         else
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Group with name '{groupName}' already exists.");
+                            Console.WriteLine($"\nGroup with name '{groupName}' already exists.\n");
                             Console.ResetColor();
                         }
                     }
@@ -117,6 +117,82 @@ while (runApp)
                         Console.WriteLine(ex.Message);
                         Console.ResetColor();
                         goto case (int)Menu.GpCreate;
+                    }
+                    break;
+                case (int)Menu.AddSt:
+                    try
+                    {
+                        Console.Write("Enter student ID to add to the group: ");
+                        if (int.TryParse(Console.ReadLine(), out int studentId))
+                        {
+                            // Verilən id ilə student var ya yox
+                            Student existingStudent = await context.Students.FindAsync(studentId);
+                            if (existingStudent is not null)
+                            {
+                                Console.Write("Enter group ID to add the student to: ");
+                                if (int.TryParse(Console.ReadLine(), out int groupId))
+                                {
+                                    // Verilən id ilə group var ya yox
+                                    Group existingGroup = await context.Groups.FindAsync(groupId);
+                                    if (existingGroup is not null)
+                                    {
+                                        // Student artıq qrupdadırsa
+                                        if (!await context.StudentGroups.AnyAsync(sg => sg.StudentId == studentId && sg.GroupId == groupId))
+                                        {
+                                            StudentGroup studentGroup = new()
+                                            {
+                                                StudentId = studentId,
+                                                GroupId = groupId,
+                                            };
+                                            studentGroups.Add(studentGroup);
+                                            await context.StudentGroups.AddAsync(studentGroup);
+                                            await context.SaveChangesAsync();
+
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine("\nStudent added to the group successfully!\n");
+                                            Console.ResetColor();
+                                        }
+                                        else
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine("\nStudent is already in the group.\n");
+                                            Console.ResetColor();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine($"\nGroup with ID {groupId} not found.\n");
+                                        Console.ResetColor();
+                                    }
+                                }
+                                else
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("\nInvalid group ID format.\n");
+                                    Console.ResetColor();
+                                }
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"\nStudent with ID {studentId} not found.\n");
+                                Console.ResetColor();
+                            }
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("\nInvalid student ID format.\n");
+                            Console.ResetColor();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                        goto case (int)Menu.AddSt;
                     }
                     break;
             }
