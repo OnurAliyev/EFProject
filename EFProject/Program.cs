@@ -1,6 +1,7 @@
 ﻿using EFProject.Core.Entities;
 using EFProject.DataAccess;
 using EFProject.Helpers;
+using EFProject.Methods;
 using Microsoft.EntityFrameworkCore;
 
 string appStart = "Application started...";
@@ -16,15 +17,18 @@ AppDbContext context = new();
 List<Student> students = new();
 List<Group> groups = new();
 List<StudentGroup> studentGroups = new();
+Methods methods = new();
 
 bool runApp = true;
 while (runApp)
 {
     Console.ForegroundColor = ConsoleColor.DarkYellow;
     Console.WriteLine("1 == Create student\n" +
-                      "2 == Create group\n" +
-                      "3 == Add student to group\n" +
-                      "4 == Update student group\n" +
+                      "2 == Show all students\n" +
+                      "3 == Create group\n" +
+                      "4 == Show all groups\n" +
+                      "5 == Add student to group\n" +
+                      "6 == Update student group\n" +
                       "0 == Close App\n" +
                       " ");
     Console.ResetColor();
@@ -81,7 +85,7 @@ while (runApp)
                 case (int)Menu.GpCreate:
                     try
                     {
-                        Console.WriteLine("Enter group name:");
+                        Console.Write("Enter group name:");
                         string? groupName = Console.ReadLine();
                         if (String.IsNullOrEmpty(groupName)) throw new ArgumentNullException();
                         int groupCapacity;
@@ -125,6 +129,7 @@ while (runApp)
                     try
                     {
                         Console.Write("Enter student ID to add to the group: ");
+                        await methods.ShowAllStudents();
                         if (int.TryParse(Console.ReadLine(), out int studentId))
                         {
                             // Verilən id ilə student var ya yox
@@ -132,6 +137,7 @@ while (runApp)
                             if (existingStudent is not null)
                             {
                                 Console.Write("Enter group ID to add the student to: ");
+                                await methods.ShowAllGroups();
                                 if (int.TryParse(Console.ReadLine(), out int groupId))
                                 {
                                     // Verilən id ilə group var ya yox
@@ -201,6 +207,7 @@ while (runApp)
                     try
                     {
                         Console.Write("Enter student ID to update group: ");
+                        await methods.ShowAllStudents();
                         if (int.TryParse(Console.ReadLine(), out int updateStudentId))
                         {
                             // Verilen id ile student var ya yox
@@ -208,6 +215,7 @@ while (runApp)
                             if (existingStudent is not null)
                             {
                                 Console.Write("Enter new group ID for the student: ");
+                                await methods.ShowAllGroups();
                                 if (int.TryParse(Console.ReadLine(), out int newGroupId))
                                 {
                                     // Verilen id ile group var ya yox
@@ -279,6 +287,12 @@ while (runApp)
                         Console.ResetColor();
                         goto case (int)Menu.StUpdate;
                     }
+                    break;
+                case (int)Menu.ShowAllSt:
+                    await methods.ShowAllStudents();
+                    break;
+                case (int)Menu.ShowAllGp:
+                    await methods.ShowAllGroups();
                     break;
                 case 0:
                     runApp = false;

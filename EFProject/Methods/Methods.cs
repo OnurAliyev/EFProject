@@ -31,7 +31,7 @@ public class Methods
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nNo students found.\n");
                 Console.ResetColor();
             }
@@ -63,7 +63,7 @@ public class Methods
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\nNo groups found.\n");
                 Console.ResetColor();
             }
