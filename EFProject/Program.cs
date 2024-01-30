@@ -46,8 +46,10 @@ while (runApp)
                     {
                         Console.Write("Enter student name: ");
                         string? studentName = Console.ReadLine();
+                        if (String.IsNullOrEmpty(studentName)) throw new ArgumentNullException();
                         Console.Write("Enter student surname: ");
                         string? studentSurname = Console.ReadLine();
+                        if (String.IsNullOrEmpty(studentSurname)) throw new ArgumentNullException();
                         int studentAge;
                         do
                         {
@@ -81,6 +83,7 @@ while (runApp)
                     {
                         Console.WriteLine("Enter group name:");
                         string? groupName = Console.ReadLine();
+                        if (String.IsNullOrEmpty(groupName)) throw new ArgumentNullException();
                         int groupCapacity;
                         do
                         {
@@ -201,14 +204,14 @@ while (runApp)
                         if (int.TryParse(Console.ReadLine(), out int updateStudentId))
                         {
                             // Verilen id ile student var ya yox
-                            Student existingStudent = await context.Students.FindAsync(updateStudentId);
+                            Student? existingStudent = await context.Students.FindAsync(updateStudentId);
                             if (existingStudent is not null)
                             {
                                 Console.Write("Enter new group ID for the student: ");
                                 if (int.TryParse(Console.ReadLine(), out int newGroupId))
                                 {
                                     // Verilen id ile group var ya yox
-                                    Group existingGroup = await context.Groups.FindAsync(newGroupId);
+                                    Group? existingGroup = await context.Groups.FindAsync(newGroupId);
                                     if (existingGroup is not null)
                                     {
                                         // Student artiq yeni qrupdadirsa
